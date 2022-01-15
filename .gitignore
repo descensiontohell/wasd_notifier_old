@@ -1,3 +1,6 @@
 
 vk_token.py
 users.db
+wasd_env
+.vscode
+__pycache__
