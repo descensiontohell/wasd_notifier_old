@@ -3,6 +3,7 @@ import vk_api
 import sqlite3
 from vk_api.longpoll import VkLongPoll, VkEventType
 from selenium.common.exceptions import *
+from database_functions import get_user_subscriptions
 from vk_token import MAIN_TOKEN
 import re
 import emoji
@@ -41,7 +42,7 @@ def subscribe_user(channel_name, user_id): # добавляет запись о 
                 pass
             subscribe_query = f"""insert into subscriptions (channel_name, user_id, is_active) values ('{channel_name}',{user_id}, {is_active});"""
             cursor.execute(subscribe_query)
-            sender(user_id, f"Вы будете получать уведомления о стримах канала {channel_name}. \nЧтобы отписаться, введите: \nотписка {channel_name}")
+            sender(user_id, f"Вы будете получать уведомления о стримах канала https://wasd.tv/{channel_name}. \n\nЧтобы отписаться, введите: \n\nотписка {channel_name}")
 
         else: # если такая подписка существует
             sender(user_id, f"Вы уже подписаны на уведомления {channel_name}. \nЧтобы отписаться, введите: \nотписка {channel_name}")
@@ -107,9 +108,6 @@ def raise_input_error(user_id): # работает но хз зачем
     sender(user_id, 'Неверное название канала или неопознанная команда. Чтобы получить список команд, введите \'команды\'')
 
 
-#def get_user_subscriptions(user_id): # TODO дописать
-
-
 def income_message_handler(event):
     income_message_text = event.text.lower()
     user_id = event.user_id
@@ -129,6 +127,9 @@ def income_message_handler(event):
             subscribe_user(raw_text[0], user_id)
         elif raw_text[0] == 'команды':
             get_commands(user_id)
+        elif raw_text[0] == 'подписки':
+            subs_list = get_user_subscriptions(user_id)
+            sender(user_id, subs_list)
         else:
             raise_input_error(user_id)
 

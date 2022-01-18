@@ -23,6 +23,16 @@ def set_last_state(channel_name, value):
     return
 
 
+def get_user_subscriptions(user_id):
+    get_subscriptions_query = f"""select channel_name from subscriptions where user_id={user_id}"""
+    cursor.execute(get_subscriptions_query)
+    message_channels = ""
+    channels_list = cursor.fetchall()
+    for i in range (len(channels_list)):
+        message_channels = message_channels + f"\n{str(channels_list[i][0])}"
+    return message_channels
+
+
 try:
     sqlite_connection = sqlite3.connect('users.db')
     cursor = sqlite_connection.cursor()
